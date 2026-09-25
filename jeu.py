@@ -1,5 +1,9 @@
-from ennemi import Ennemi
-
+from models.ennemi import Ennemi
+from models.ennemi import Ennemi
+from models.comportements.agressif import ComportementAgressif
+from models.comportements.defensif import ComportementDefensif
+from models.comportements.aleatoire import ComportementAleatoire
+from models.comportements.furtif import ComportementFurtif
 class Jeu:
     def __init__(self):
         self.heros_hp = 100
@@ -7,9 +11,9 @@ class Jeu:
         self.heros_attaque = 20
 
         self.ennemis = [
-            Ennemi("Goblin", 50, 10, "agressif"),
-            Ennemi("Dragon", 100, 20, "defensif"),
-            Ennemi("Voleur", 30, 15, "furtif"),
+            Ennemi("Goblin", 50, 10, comportement=ComportementAgressif()),
+            Ennemi("Dragon", 100, 20, comportement=ComportementDefensif()),
+            Ennemi("Voleur", 30, 15, comportement=ComportementFurtif()),
         ]
 
     def ennemis_vivants(self):
@@ -28,7 +32,7 @@ class Jeu:
             print("\nEnnemis :")
             vivants = self.ennemis_vivants()
             for i, ennemi in enumerate(vivants, 1):
-                print(f"  [{i}] {ennemi.nom} (HP: {ennemi.hp}/{ennemi.hp_max}) — {ennemi.comportement}")
+                print(f"  [{i}] {ennemi.nom} (HP: {ennemi.hp}/{ennemi.hp_max}) — {ennemi.get_comportement().__class__.__name__}")
             print()
 
             # Demander l'action du héros
@@ -82,13 +86,21 @@ class Jeu:
                         degats = ennemi.attaque
                         print(f"  → {ennemi.nom} vous attaque pour {degats} dégâts !")
                     self.heros_hp = max(0, self.heros_hp - degats)
+                elif action_ennemi == "attaque_double":          
+                    degats = ennemi.attaque * 2
+                    if action_heros == "defend":
+                        degats = degats // 2
+                        print(f"  → {ennemi.nom} attaque en BERSERK — vous vous défendez ! Seulement {degats} dégâts reçus.")
+                    else:
+                        print(f"  → {ennemi.nom} attaque en BERSERK pour {degats} dégâts !")
+                        self.heros_hp = max(0, self.heros_hp - degats)
                 else:
                     print(f"  → {ennemi.nom} se défend.")
 
             # Adaptation des comportements
             for ennemi in self.ennemis_vivants():
-                if ennemi.hp < ennemi.hp_max * 0.3 and ennemi.comportement != "defensif":
-                    ennemi.comportement = "defensif"
+                if ennemi.hp < ennemi.hp_max * 0.3 and type(ennemi.get_comportement()) != ComportementDefensif:
+                    ennemi.set_comportement(ComportementDefensif())
                     print(f"  ⚡ {ennemi.nom} change de tactique — il devient Défensif !")
 
             print()
