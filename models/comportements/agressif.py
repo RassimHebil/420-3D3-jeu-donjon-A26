@@ -4,4 +4,4 @@ from models.actions.action_attaque import ActionAttaque
 class ComportementAgressif(Comportement):
 
     def agir(self, ennemi) -> str:
-        return ActionAttaque
+        return ActionAttaque()

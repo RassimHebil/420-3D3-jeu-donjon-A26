@@ -1,5 +1,4 @@
 from models.ennemi import Ennemi
-from models.ennemi import Ennemi
 from models.comportements.agressif import ComportementAgressif
 from models.comportements.defensif import ComportementDefensif
 from models.comportements.aleatoire import ComportementAleatoire
@@ -83,7 +82,8 @@ class Jeu:
             for ennemi, action_ennemi in actions_ennemis.items():
                 if not ennemi.est_vivant():
                     continue
-                self.heros_hp, msg = action_ennemi.appliquer(ennemi, self.heros_hp, action_heros)
+                self.heros_hp, msg = action_ennemi.appliquer(ennemi,self.heros_hp,action_heros)
+                print(msg)
 
             # Adaptation des comportements
             for ennemi in self.ennemis_vivants():
